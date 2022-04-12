@@ -42,7 +42,7 @@ function playRound(playerSelection, computerSelection) {
 }
 
 function game() {
-  let check = '', score = 0;
+  let check = result = '', playerScore = computerScore = 0;
   let playerSelection = playerPlay();
   let computerSelection = computerPlay();
   
@@ -51,10 +51,20 @@ function game() {
     computerSelection = computerPlay();
     check = playRound(playerSelection, computerSelection);
     console.log(check.winner);
-    if (check.winner == 'player') score++;
+    if (check.winner == 'player') {
+      playerScore++;
+    } else if (check.winner == 'computer') {
+      computerScore++;
+    }
   }
-
-  return score;
+  if (playerScore > computerScore) {
+    result = `Player won with score ${playerScore} : ${computerScore}`
+  } else if (computerScore > playerScore) {
+    result = `Computer won with score ${computerScore} : ${playerScore}`
+  } else {
+    result = "Winner is undefine =)"
+  }
+  return result;
 }
 
 console.log(game());
