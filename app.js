@@ -1,7 +1,7 @@
 const gameItems = document.querySelectorAll(".gameItem");
 const scoreTable = document.querySelector(".menu .score");
 const roundTable = document.querySelector(".menu .round");
-const result = document.querySelector(".round div");
+const result = document.querySelector(".round span");
 const restartButtons = document.querySelectorAll("button");
 const menuPlay = document.querySelector(".menu .play");
 const menuFinish = document.querySelector(".menu .finish");
