@@ -1,3 +1,11 @@
+const gameItems = document.querySelectorAll(".gameItem");
+const scoreTable = document.querySelector(".menu .score");
+const roundTable = document.querySelector(".menu .round");
+const result = document.querySelector(".round div");
+const restartButtons = document.querySelectorAll("button");
+const menuPlay = document.querySelector(".menu .play");
+const menuFinish = document.querySelector(".menu .finish");
+let totalScore = (computerScore = playerScore = 0);
 
 function computerPlay() {
   items = ["rock", "paper", "scissors"];
@@ -5,67 +13,73 @@ function computerPlay() {
   return items[number];
 }
 
-function playerPlay() {
-  let playerSelection = prompt("What is your choice?");
-  playerSelection = playerSelection.toLowerCase();
-  return playerSelection;
-}
-
-function playRound(playerSelection, computerSelection) {
-  const variants = [
-    {
-      message: `You won! ${playerSelection} beat ${computerSelection}`,
-      winner: "player"
-    },
-    {
-      message: `You lose! ${computerSelection} beat ${playerSelection}`,
-      winner: "computer"
-    },
-    {
-      message: "Draw! Let's play next round!",
-      winner: "draw"
-    }
-  ]
-
-  let result = {};
-  
-  if (playerSelection === computerSelection) {
-    result =  variants[2];
-  } else if (playerSelection === "rock") {
-    result = computerSelection === "scissors" ? variants[0] : variants[1];
-  } else if (playerSelection === "scissors") {
-    result = computerSelection === "paper" ? variants[0] : variants[1];
-  } else if (playerSelection === "paper") {
-    result = computerSelection === "rock" ? variants[0] : variants[1];
-  }
-  return result;
-}
-
-function game() {
-  let check = result = '', playerScore = computerScore = 0;
-  let playerSelection = playerPlay();
+function playRound(playerSelection) {
+  let winner;
   let computerSelection = computerPlay();
-  
+  let resultMessage;
 
-  for (let i = 0; i < 5; i++) {
-    computerSelection = computerPlay();
-    check = playRound(playerSelection, computerSelection);
-    console.log(check.winner);
-    if (check.winner == 'player') {
-      playerScore++;
-    } else if (check.winner == 'computer') {
-      computerScore++;
-    }
+  // Check round result
+  if (playerSelection === computerSelection) {
+    winner = "draw";
+  } else if (playerSelection === "rock") {
+    winner = computerSelection === "scissors" ? "player" : "computer";
+  } else if (playerSelection === "scissors") {
+    winner = computerSelection === "paper" ? "player" : "computer";
+  } else if (playerSelection === "paper") {
+    winner = computerSelection === "rock" ? "player" : "computer";
   }
-  if (playerScore > computerScore) {
-    result = `Player won with score ${playerScore} : ${computerScore}`
-  } else if (computerScore > playerScore) {
-    result = `Computer won with score ${computerScore} : ${playerScore}`
+
+  if (winner === "player") {
+    playerScore++;
+    totalScore++;
+    resultMessage = `Player won! ${playerSelection} beats
+    ${computerSelection}`;
+  } else if (winner === "computer") {
+    computerScore++;
+    totalScore++;
+    resultMessage = `Computer won! ${computerSelection} beats
+    ${playerSelection}`;
   } else {
-    result = "Winner is undefine =)"
+    resultMessage = `Draw! Let's play next round =>`;
   }
-  return result;
+  result.textContent = resultMessage;
+
+  return `Computer Score: ${computerScore} - Player Score: ${playerScore}`;
 }
 
-console.log(game());
+function finishGame(computerScore, playerScore) {
+  let result = "";
+  if (playerScore > computerScore) {
+    result = `Player won with score ${playerScore} : ${computerScore}`;
+  } else if (computerScore > playerScore) {
+    result = `Computer won with score ${computerScore} : ${playerScore}`;
+  }
+  menuFinish.textContent = result;
+  menuPlay.style.cssText = "display: none";
+  menuFinish.style.cssText = "display: block;";
+}
 
+setInterval(() => {
+  if (totalScore === 5) {
+    finishGame(computerScore, playerScore);
+  }
+}, 1);
+
+gameItems.forEach((element) => {
+  element.addEventListener("click", (e) => {
+    if (totalScore < 5) {
+      scoreTable.textContent = playRound(e.target.id);
+    }
+  });
+});
+
+restartButtons.forEach((element) => {
+  element.addEventListener("click", (e) => {
+    totalScore = computerScore = playerScore = 0;
+    menuFinish.style.cssText = "display: none";
+    menuPlay.style.cssText = "display: block";
+    scoreTable.textContent = `Computer Score: ${computerScore} -
+      Player Score: ${playerScore}`;
+    result.textContent = "";
+  });
+});
